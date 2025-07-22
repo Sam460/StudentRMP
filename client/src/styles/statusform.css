@@ -1,0 +1,54 @@
+body {
+  background-color: #f5f9ff;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.status-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 90vh;
+}
+
+.status-form {
+  background: #ffffff;
+  padding: 40px;
+  border-radius: 10px;
+  width: 400px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.status-form h2 {
+  text-align: center;
+  color: #1a237e;
+  margin-bottom: 25px;
+}
+
+.status-form label {
+  display: block;
+  margin: 10px 0 6px;
+  font-weight: 500;
+}
+
+.status-form input,
+.status-form select {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 14px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+.status-form button {
+  width: 100%;
+  padding: 10px;
+  background-color: #1a237e;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 15px;
+  cursor: pointer;
+  margin-top: 10px;
+}
