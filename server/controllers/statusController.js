@@ -1,20 +1,47 @@
 const Status = require('../models/Status');
 
 exports.createStatus = async (req, res) => {
-  const { educationLevel, stream, goal, preferredLocation } = req.body;
+  const {
+    name,
+    gender,
+    studyStatus,
+    interestedField,
+    address,
+    district,
+    pin,
+    educationLevel,
+    stream,
+    goal,
+    preferredLocation
+  } = req.body;
+
   const userId = req.user.id;
 
   try {
+    // Optional: Basic validation
+    if (!name || !gender || !studyStatus || !interestedField || !address || !district || !pin) {
+      return res.status(400).json({ error: "All required fields must be filled" });
+    }
+
     const newStatus = new Status({
       userId,
+      name,
+      gender,
+      studyStatus,
+      interestedField,
+      address,
+      district,
+      pin,
       educationLevel,
       stream,
       goal,
       preferredLocation
     });
+
     await newStatus.save();
-    res.json({ message: "Status saved successfully" });
+    res.status(201).json({ message: "Status saved successfully" });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("createStatus error:", err);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
