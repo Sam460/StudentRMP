@@ -5,9 +5,13 @@ import '../styles/statusform.css';
 
 const StatusForm = () => {
   const [form, setForm] = useState({
-    educationLevel: '',
-    stream: '',
-    goal: '',
+    name: '',
+    gender: '',
+    studyStatus: '',
+    interestedField: '',
+    address: '',
+    district: '',
+    pin: ''
   });
 
   const navigate = useNavigate();
@@ -20,15 +24,17 @@ const StatusForm = () => {
     e.preventDefault();
 
     try {
-      // 1. Submit status data
       const token = localStorage.getItem('token');
+
+      // 1. Submit form data
       await axios.post('http://localhost:5000/api/status/submit', form, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${token}` }
       });
 
-      // 2. Get GPS Location
+      // 2. GPS detection
       getLocation(token);
     } catch (err) {
+      console.error(err);
       alert(err.response?.data?.error || 'Status update failed');
     }
   };
@@ -44,17 +50,13 @@ const StatusForm = () => {
         const { latitude, longitude } = position.coords;
 
         try {
-          // 3. Reverse geocode
-          const response = await axios.get(
-            `https://nominatim.openstreetmap.org/reverse`,
-            {
-              params: {
-                format: 'json',
-                lat: latitude,
-                lon: longitude,
-              },
-            }
-          );
+          const response = await axios.get(`https://nominatim.openstreetmap.org/reverse`, {
+            params: {
+              format: 'json',
+              lat: latitude,
+              lon: longitude,
+            },
+          });
 
           const { address } = response.data;
           const state = address.state || '';
@@ -62,22 +64,16 @@ const StatusForm = () => {
 
           console.log("Detected:", city, state);
 
-          // 4. Send to backend to fetch colleges
-          const res = await axios.get(
-            `http://localhost:5000/api/colleges/${state}/${city}`,
-            {
-              headers: { Authorization: `Bearer ${token}` },
-            }
-          );
+          const res = await axios.get(`http://localhost:5000/api/colleges/${state}/${city}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
 
-          // Optional: Save to localStorage or navigate to show results
           localStorage.setItem('nearbyColleges', JSON.stringify(res.data));
           navigate('/dashboard');
-
         } catch (err) {
           console.error("Location fetch error", err);
           alert("Could not detect location or fetch colleges.");
-          navigate('/dashboard'); // Fallback to dashboard
+          navigate('/dashboard');
         }
       },
       (error) => {
@@ -91,37 +87,49 @@ const StatusForm = () => {
   return (
     <div className="status-wrapper">
       <form className="status-form" onSubmit={handleSubmit}>
-        <h2>Student Status</h2>
+        <h2>📝 Update Your Educational Status</h2>
 
-        <label>Education Level</label>
-        <select name="educationLevel" value={form.educationLevel} onChange={handleChange} required>
+        <label>Name</label>
+        <input type="text" name="name" value={form.name} onChange={handleChange} required />
+
+        <label>Gender</label>
+        <div className="gender-group">
+          <label><input type="radio" name="gender" value="Male" onChange={handleChange} required /> Male</label>
+          <label><input type="radio" name="gender" value="Female" onChange={handleChange} /> Female</label>
+          <label><input type="radio" name="gender" value="Other" onChange={handleChange} /> Other</label>
+        </div>
+
+        <label>Current Study Status</label>
+        <select name="studyStatus" value={form.studyStatus} onChange={handleChange} required>
           <option value="">Select</option>
-          <option>10th</option>
-          <option>12th</option>
-          <option>Undergraduate</option>
-          <option>Postgraduate</option>
+          <option value="10th">10th</option>
+          <option value="12th">12th</option>
+          <option value="Diploma">Diploma</option>
+          <option value="Undergraduate">Undergraduate</option>
+          <option value="Postgraduate">Postgraduate</option>
         </select>
 
-        <label>Stream</label>
-        <select name="stream" value={form.stream} onChange={handleChange} required>
+        <label>Interested Field</label>
+        <select name="interestedField" value={form.interestedField} onChange={handleChange} required>
           <option value="">Select</option>
-          <option>Science</option>
-          <option>Commerce</option>
-          <option>Arts</option>
-          <option>Other</option>
+          <option value="Science">Science</option>
+          <option value="Commerce">Commerce</option>
+          <option value="Arts">Arts</option>
+          <option value="Engineering">Engineering</option>
+          <option value="Medical">Medical</option>
+          <option value="Law">Law</option>
         </select>
 
-        <label>Career Goal</label>
-        <input
-          type="text"
-          name="goal"
-          placeholder="e.g. Software Engineer, IAS Officer"
-          value={form.goal}
-          onChange={handleChange}
-          required
-        />
+        <label>Current Address</label>
+        <input type="text" name="address" value={form.address} onChange={handleChange} required />
 
-        <button type="submit">Submit & Detect Location</button>
+        <label>District</label>
+        <input type="text" name="district" value={form.district} onChange={handleChange} required />
+
+        <label>Pin Code</label>
+        <input type="text" name="pin" value={form.pin} onChange={handleChange} required />
+
+        <button type="submit">Update Data & Detect Location</button>
       </form>
     </div>
   );

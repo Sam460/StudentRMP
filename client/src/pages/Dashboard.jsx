@@ -7,23 +7,21 @@ const Dashboard = () => {
   const [status, setStatus] = useState(null);
   const [roadmap, setRoadmap] = useState([]);
   const [colleges, setColleges] = useState([]);
+  const [showAllColleges, setShowAllColleges] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
 
-    // ✅ 1. Fetch student status
     axios.get('http://localhost:5000/api/status/latest', {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(res => {
         setStatus(res.data.status);
 
-        // ✅ 2. Try to load colleges from localStorage (from GPS detection)
         const stored = localStorage.getItem('nearbyColleges');
         if (stored) {
           setColleges(JSON.parse(stored));
         } else {
-          // ✅ 3. Fallback: fetch colleges using preferredLocation (if no GPS)
           return axios.get(`http://localhost:5000/api/colleges/${res.data.status.preferredLocation}`);
         }
       })
@@ -34,7 +32,6 @@ const Dashboard = () => {
       })
       .catch(err => console.error('Status/College Error:', err));
 
-    // ✅ 4. Fetch roadmap
     axios.get('http://localhost:5000/api/roadmap/my-roadmap', {
       headers: { Authorization: `Bearer ${token}` }
     })
@@ -46,7 +43,6 @@ const Dashboard = () => {
     <div className="dashboard">
       <h2>🎓 Welcome to Your Dashboard</h2>
 
-      {/* Status Block */}
       {status && (
         <div className="card">
           <h3>📋 Your Education Info</h3>
@@ -57,7 +53,6 @@ const Dashboard = () => {
         </div>
       )}
 
-      {/* Roadmap Preview */}
       {roadmap.length > 0 && (
         <div className="card">
           <h3>🗺️ Your Roadmap Preview</h3>
@@ -70,17 +65,24 @@ const Dashboard = () => {
         </div>
       )}
 
-      {/* Colleges Nearby */}
       {colleges.length > 0 && (
         <div className="card">
           <h3>🏫 Colleges Near You</h3>
           <ul>
-            {colleges.slice(0, 3).map((college, idx) => (
+            {(showAllColleges ? colleges : colleges.slice(0, 3)).map((college, idx) => (
               <li key={idx}>
                 🎓 {college.name} ({college.type}) - {college.city}, {college.state}
               </li>
             ))}
           </ul>
+          {colleges.length > 3 && (
+            <button
+              className="see-more-btn"
+              onClick={() => setShowAllColleges(!showAllColleges)}
+            >
+              {showAllColleges ? "Show Less" : "See More Colleges"}
+            </button>
+          )}
         </div>
       )}
 

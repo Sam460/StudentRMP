@@ -20,7 +20,7 @@ body {
   padding: 25px;
   border-radius: 10px;
   margin-bottom: 25px;
-  box-shadow: 0 0 8px rgba(0,0,0,0.05);
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
 }
 
 .card h3 {
@@ -53,10 +53,31 @@ body {
   text-decoration: none;
   font-weight: 500;
   margin: 0 10px;
+  transition: background 0.3s ease;
+}
+
+.dashboard-btn:hover {
+  background: #0d154c;
 }
 
 .dashboard-btn.outline {
   background: white;
   color: #1a237e;
   border: 1px solid #1a237e;
+}
+
+.dashboard-btn.outline:hover {
+  background: #e8ebff;
+}
+
+/* 🔽 See More Colleges Toggle Button */
+.see-more-btn {
+  background: transparent;
+  border: none;
+  color: #1a237e;
+  font-size: 14px;
+  text-decoration: underline;
+  cursor: pointer;
+  margin-top: 10px;
+  display: block;
 }
